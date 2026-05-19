@@ -1374,12 +1374,11 @@
                 'paraboloide': (h) => Math.PI * (h*h / 4.0)
             };
 
-            // Función para generar matrices 3D (X, Y, Z) para revolución
+            // Función para generar matrices 3D (X, Y, Z) de alta resolución
             function generateSurface(type, zMin, zMax, steps) {
-                const thetaSteps = 40;
+                const thetaSteps = 80; // ALTA RESOLUCIÓN
                 let x = [], y = [], z = [];
                 
-                // Prevenir errores si la altura es 0 (líquido vacío)
                 if (zMax <= zMin) zMax = zMin + 0.001; 
                 
                 for (let i = 0; i <= steps; i++) {
@@ -1396,21 +1395,13 @@
                         rowY.push(r * Math.sin(theta));
                         rowZ.push(currentZ);
                     }
-                    x.push(rowX);
-                    y.push(rowY);
-                    z.push(rowZ);
+                    x.push(rowX); y.push(rowY); z.push(rowZ);
                 }
                 
-                // Agregar tapas para dar sensación de sólido cerrado al líquido
                 if (zMax > 0.01) {
                     let topX = [], topY = [], topZ = [];
-                    let rTop = 0;
-                    if (type === 'cilindro') rTop = 1.0;
-                    else if (type === 'esfera') rTop = Math.sqrt(Math.max(0, 2*zMax - zMax*zMax));
-                    else if (type === 'paraboloide') rTop = Math.sqrt(Math.max(0, zMax / 2.0));
-                    
                     for (let j = 0; j <= thetaSteps; j++) {
-                        topX.push(0); topY.push(0); topZ.push(zMax); // Centro superior
+                        topX.push(0); topY.push(0); topZ.push(zMax);
                     }
                     x.push(topX); y.push(topY); z.push(topZ);
                 }
@@ -1418,47 +1409,56 @@
                 return {x, y, z};
             }
 
-            let initialCamera = { eye: {x: 1.5, y: 1.5, z: 0.8} };
+            // Propiedades de estilo profesional
+            const meshContours = {
+                x: {show: true, color: 'rgba(0,0,0,0.1)', width: 1},
+                y: {show: true, color: 'rgba(0,0,0,0.1)', width: 1},
+                z: {show: true, color: 'rgba(0,0,0,0.2)', width: 1}
+            };
+            const glassLighting = { ambient: 0.6, diffuse: 0.8, specular: 1, roughness: 0.1, fresnel: 0.3 };
+            const liquidLighting = { ambient: 0.5, diffuse: 0.9, specular: 0.4, roughness: 0.6 };
+
+            let initialCamera = { eye: {x: 1.6, y: 1.6, z: 1.0} };
 
             function updateSimulation() {
                 const type = tankSelect.value;
                 const h = parseFloat(levelSlider.value);
                 
-                // Actualizar textos interfaz
                 hDisplay.textContent = h.toFixed(2) + " m";
                 const v = volumes[type](h);
                 vDisplay.innerHTML = v.toFixed(3) + ' <span style="font-size: 20px; color: #94a3b8;">m³</span>';
                 
-                // 1. Capa Exterior: Tanque Translúcido
-                const tank = generateSurface(type, 0, 2, 20);
+                const tank = generateSurface(type, 0, 2, 40);
                 const traceTank = {
                     x: tank.x, y: tank.y, z: tank.z,
                     type: 'surface',
-                    opacity: 0.15,
-                    colorscale: [[0, '#002147'], [1, '#002147']], // Azul Marino
+                    opacity: 0.2,
+                    colorscale: [[0, '#002147'], [1, '#002147']],
                     showscale: false,
                     hoverinfo: 'none',
-                    name: 'Contorno'
+                    name: 'Cristal Exterior',
+                    contours: meshContours,
+                    lighting: glassLighting
                 };
 
-                // 2. Capa Interior: Líquido
                 let traceLiquid = null;
                 if (h > 0) {
-                    const liquid = generateSurface(type, 0, h, Math.max(5, Math.floor(h * 15)));
+                    const liquid = generateSurface(type, 0, h, Math.max(10, Math.floor(h * 30)));
                     traceLiquid = {
                         x: liquid.x, y: liquid.y, z: liquid.z,
                         type: 'surface',
-                        opacity: 0.85,
-                        colorscale: [[0, '#0284c7'], [1, '#38bdf8']], // Azul Agua
+                        opacity: 0.95,
+                        colorscale: [[0, '#0284c7'], [1, '#38bdf8']],
                         showscale: false,
                         hoverinfo: 'none',
-                        name: 'Líquido'
+                        name: 'Líquido Volumétrico',
+                        contours: { z: {show: true, color: 'rgba(0,0,0,0.1)', width: 1} },
+                        lighting: liquidLighting
                     };
                 }
                 
                 const data = traceLiquid ? [traceTank, traceLiquid] : [traceTank];
 
-                // Mantener estado de cámara si ya existe
                 const graphDiv = document.getElementById('sim-3d');
                 if (graphDiv && graphDiv._fullLayout && graphDiv._fullLayout.scene && graphDiv._fullLayout.scene.camera) {
                     initialCamera = graphDiv._fullLayout.scene.camera;
@@ -1480,7 +1480,6 @@
                 Plotly.react('sim-3d', data, layout, {displayModeBar: false});
             }
 
-            // Event Listeners
             levelSlider.addEventListener('input', updateSimulation);
             tankSelect.addEventListener('change', updateSimulation);
 
@@ -1491,26 +1490,32 @@
                     xaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
                     yaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
                     zaxis: {range: [0, 2.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
-                    camera: {eye: {x: 1.5, y: 1.5, z: 0.8}},
+                    camera: {eye: {x: 1.6, y: 1.6, z: 1.0}},
                     aspectratio: {x: 1, y: 1, z: 1.2}
                 },
                 paper_bgcolor: 'rgba(0,0,0,0)',
                 plot_bgcolor: 'rgba(0,0,0,0)'
             };
 
-            const shapes = ['cilindro', 'esfera', 'esfera', 'paraboloide']; // Elipsoide es esfera degenerada
+            const shapes = ['cilindro', 'esfera', 'esfera', 'paraboloide']; 
             const divs = ['plotly-cilindro', 'plotly-esfera', 'plotly-elipsoide', 'plotly-paraboloide'];
 
             divs.forEach((divId, index) => {
                 const shape = shapes[index];
-                const surf = generateSurface(shape, 0, 2, 25);
+                const surf = generateSurface(shape, 0, 2, 40);
                 const trace = {
                     x: surf.x, y: surf.y, z: surf.z,
                     type: 'surface',
-                    opacity: 0.9,
-                    colorscale: [[0, '#f97316'], [1, '#c2410c']], // Naranja quemado
+                    opacity: 1,
+                    colorscale: [[0, '#c2410c'], [1, '#f97316']], // Naranja técnico
                     showscale: false,
-                    hoverinfo: 'none'
+                    hoverinfo: 'none',
+                    contours: {
+                        x: {show: true, color: 'rgba(255,255,255,0.2)', width: 1},
+                        y: {show: true, color: 'rgba(255,255,255,0.2)', width: 1},
+                        z: {show: true, color: 'rgba(255,255,255,0.3)', width: 2}
+                    },
+                    lighting: {ambient: 0.5, diffuse: 0.9, specular: 0.8, roughness: 0.2, fresnel: 0.2}
                 };
                 if(document.getElementById(divId)){
                     Plotly.newPlot(divId, [trace], layoutStatic, {displayModeBar: false});
