@@ -732,8 +732,8 @@
 
     <div class="slide-container" id="slide6-img">
         <h2 class="slide-title">Visualización 3D: Tanque Cilíndrico</h2>
-        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
-            <img src="cilindro.png" alt="Modelo 3D Cilíndrico" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <div id="plotly-cilindro" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
 
@@ -907,8 +907,8 @@
 
     <div class="slide-container" id="slide8-img">
         <h2 class="slide-title">Visualización 3D: Tanque Esférico</h2>
-        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
-            <img src="esfera.png" alt="Modelo 3D Esférico" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <div id="plotly-esfera" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
 
@@ -1001,8 +1001,8 @@
 
     <div class="slide-container" id="slide10-img">
         <h2 class="slide-title">Visualización 3D: Tanque Elipsoidal (Esfera)</h2>
-        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
-            <img src="elipsoide.png" alt="Modelo 3D Elipsoidal" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <div id="plotly-elipsoide" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
 
@@ -1143,8 +1143,8 @@
 
     <div class="slide-container" id="slide12-img">
         <h2 class="slide-title">Visualización 3D: Tanque Paraboloide</h2>
-        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
-            <img src="paraboloide.png" alt="Modelo 3D Paraboloide" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+            <div id="plotly-paraboloide" style="width: 100%; height: 500px;"></div>
         </div>
     </div>
 
@@ -1484,7 +1484,40 @@
             levelSlider.addEventListener('input', updateSimulation);
             tankSelect.addEventListener('change', updateSimulation);
 
-            // Iniciar renderizado
+            // --- GRÁFICOS ESTÁTICOS 3D (REEMPLAZO DE IMÁGENES) ---
+            const layoutStatic = {
+                margin: {l:0, r:0, b:0, t:0},
+                scene: {
+                    xaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                    yaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                    zaxis: {range: [0, 2.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                    camera: {eye: {x: 1.5, y: 1.5, z: 0.8}},
+                    aspectratio: {x: 1, y: 1, z: 1.2}
+                },
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            };
+
+            const shapes = ['cilindro', 'esfera', 'esfera', 'paraboloide']; // Elipsoide es esfera degenerada
+            const divs = ['plotly-cilindro', 'plotly-esfera', 'plotly-elipsoide', 'plotly-paraboloide'];
+
+            divs.forEach((divId, index) => {
+                const shape = shapes[index];
+                const surf = generateSurface(shape, 0, 2, 25);
+                const trace = {
+                    x: surf.x, y: surf.y, z: surf.z,
+                    type: 'surface',
+                    opacity: 0.9,
+                    colorscale: [[0, '#f97316'], [1, '#c2410c']], // Naranja quemado
+                    showscale: false,
+                    hoverinfo: 'none'
+                };
+                if(document.getElementById(divId)){
+                    Plotly.newPlot(divId, [trace], layoutStatic, {displayModeBar: false});
+                }
+            });
+
+            // Iniciar renderizado interactivo principal
             updateSimulation();
         });
     </script>
