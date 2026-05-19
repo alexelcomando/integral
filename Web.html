@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto Final: Optimización de Sólidos de Revolución</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Inter:wght@300;400;600&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        /* SETUP DE MAQUETACIÓN PREMIUM ESTILO EXECUTIVE SLIDES */
+        * {
+            box-sizing: border-box;
+        }
+
+        p {
+            margin: 0 0 15px;
+        }
+
+        body {
+            background-color: #0f172a;
+            display: grid;
+            gap: 60px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            padding: 50px 0;
+            place-items: center;
+        }
+
+        .slide-container {
+            width: 1280px;
+            height: 720px;
+            background-color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            padding: 55px 75px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        /* IDENTIDAD INSTITUCIONAL DISCRETA */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #002147 0%, #f97316 100%);
+        }
+
+        .slide-container::after {
+            content: 'Ingeniería de Sistemas — Universidad del Magdalena (2026)';
+            position: absolute;
+            bottom: 20px;
+            left: 75px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* TIPOGRAFÍAS */
+        h1,
+        h2,
+        h3 {
+            color: #002147;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+        }
+
+        h1 {
+            font-size: 52px;
+            font-weight: 700;
+            line-height: 1.15;
+        }
+
+        .slide-title {
+            font-size: 34px;
+            font-weight: 700;
+            margin-bottom: 35px;
+            border-left: 6px solid #f97316;
+            padding-left: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            font-size: 22px;
+            color: #64748b;
+            margin-top: 15px;
+        }
+
+        /* MAQUETACIÓN FLEXIBLE AJUSTADA */
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+            width: 100%;
+        }
+
+        .three-column {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+        }
+
+        /* LIENZO DE CÓDIGO PYTHON EN FORMATO VISIBLE COMPLETO */
+        .code-editor-canvas {
+            background-color: #090d16;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            line-height: 1.6;
+            overflow: hidden;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .editor-top-bar {
+            background-color: #111827;
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid #1f2937;
+        }
+
+        .window-control {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .ctrl-close {
+            background-color: #ef4444;
+        }
+
+        .ctrl-min {
+            background-color: #f59e0b;
+        }
+
+        .ctrl-max {
+            background-color: #10b981;
+        }
+
+        .editor-body {
+            padding: 25px 30px;
+            color: #e2e8f0;
+        }
+
+        .py-keyword {
+            color: #f472b6;
+            font-weight: 600;
+        }
+
+        .py-func {
+            color: #38bdf8;
+        }
+
+        .py-str {
+            color: #34d399;
+        }
+
+        .py-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .py-num {
+            color: #fb923c;
+        }
+
+        .terminal-output {
+            background-color: #111827;
+            border-top: 1px solid #1f2937;
+            color: #f59e0b;
+            padding: 14px 30px;
+            font-family: 'Fira Code', monospace;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        /* CAJAS CONTENEDORAS DE MATEMÁTICAS */
+        .math-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        /* TABLAS DE CONTROL FINANCIERO Y COMPARACIÓN */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            background: #002147;
+            color: #ffffff;
+            padding: 14px 18px;
+            text-align: left;
+            font-family: 'Montserrat';
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+            font-size: 15px;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        /* TARJETAS DE DATOS METÓDICOS */
+        .info-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            border-top: 4px solid #002147;
+        }
+
+        .info-card.accent-orange {
+            border-top-color: #f97316;
+            background: #fff7ed;
+        }
+
+        /* GRÁFICO DE BARRAS AGRUPADAS RECALCULADO */
+        .bar-graph-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .graph-row {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .graph-axis-title {
+            width: 140px;
+            font-weight: 700;
+            color: #002147;
+            font-size: 14px;
+            text-align: right;
+            letter-spacing: 0.5px;
+        }
+
+        .graph-bar-track {
+            flex-grow: 1;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            position: relative;
+        }
+
+        .graph-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .color-navy {
+            background: linear-gradient(90deg, #002147, #1e3a8a);
+        }
+
+        .color-slate {
+            background: #475569;
+        }
+
+        .area-sub-line {
+            height: 6px;
+            background: #f97316;
+            position: absolute;
+            bottom: -12px;
+            border-radius: 3px;
+        }
+
+        /* JERARQUÍA DE ESCALERA */
+        .staircase-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .stair-level {
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 16px 25px;
+            border-radius: 12px;
+        }
+
+        .stair-level.winner-level {
+            background: #fff7ed;
+            border-color: #f97316;
+            transform: scale(1.02);
+            box-shadow: 0 10px 25px rgba(249, 115, 22, 0.08);
+        }
+
+        .level-badge {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #002147;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 25px;
+        }
+
+        .winner-level .level-badge {
+            background: #f97316;
+        }
+
+        .level-body {
+            flex-grow: 1;
+        }
+
+        .level-output-data {
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 19px;
+            color: #002147;
+        }
+        /* ESTILOS PARA EXPORTACIÓN A PDF */
+        @media print {
+            @page {
+                margin: 0;
+            }
+            body {
+                background-color: #ffffff;
+                padding: 0;
+                margin: 0;
+                display: block;
+            }
+            .slide-container {
+                width: 1280px;
+                height: 720px;
+                box-shadow: none;
+                page-break-after: always;
+                page-break-inside: avoid;
+                margin: 0;
+                padding: 55px 75px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            #pdf-export-btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="pdf-export-btn" onclick="window.print()" style="position: fixed; bottom: 30px; right: 30px; background: #f97316; color: white; border: none; border-radius: 8px; padding: 12px 24px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px; cursor: pointer; box-shadow: 0 10px 20px rgba(249, 115, 22, 0.3); z-index: 1000; transition: transform 0.2s, background 0.2s;"><i class="fa-solid fa-file-pdf" style="margin-right: 8px;"></i> Exportar a PDF</button>
+
+    <div class="slide-container" id="slide1">
+        <div class="content-area" style="text-align: center;">
+            <p
+                style="font-weight: 700; color: #f97316; text-transform: uppercase; letter-spacing: 5px; margin-bottom: 15px; font-size: 14px;">
+                FACULTAD DE INGENIERÍA · PROGRAMA DE INGENIERÍA DE SISTEMAS</p>
+            <h1 style="margin-bottom: 5px;">OPTIMIZACIÓN DE SÓLIDOS DE REVOLUCIÓN</h1>
+            <p class="subtitle" style="font-size: 24px;">Modelado y Análisis Eficiente de Sistemas de Almacenamiento de
+                Líquidos</p>
+            <div style="width: 120px; height: 5px; background: #002147; margin: 35px auto;"></div>
+            <p style="font-size: 15px; color: #475569; line-height: 1.7; font-weight: 500;">
+                <strong>Integrantes:</strong> Alejandro Ferreira Flórez, Keiner David Chiquillo Ospino, Hernán Enrique
+                Vargas Rodríguez,<br>
+                Luis Alejandro Rodríguez Berrio, Ronaldo Ferrer Márquez<br>
+                <strong>Docente:</strong> Darwin Gregorio Villar Salinas | Cálculo Integral — 2026
+            </p>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide2">
+        <h2 class="slide-title">Introducción</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 17px; line-height: 1.6; color: #334155; text-align: justify;">
+                        El almacenamiento seguro y económico de líquidos es crítico en entornos agropecuarios,
+                        residenciales y de refinación industrial. La selección de la forma de un contenedor
+                        influye de forma directa sobre variables clave de ingeniería: la capacidad volumétrica real, la
+                        fatiga del material estructural frente a presiones hidrostáticas y la viabilidad económica del
+                        proyecto.
+                    </p>
+                    <p style="font-size: 17px; line-height: 1.6; color: #334155; text-align: justify;">
+                        Este proyecto evalúa rigurosamente cuatro geometrías tridimensionales obtenidas mediante la
+                        rotación de funciones generatrices en el espacio, unificando el análisis del cálculo analítico
+                        tradicional con la automatización del software de computación.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h3 style="color: #002147; font-size: 18px; margin-bottom: 15px;"><i class="fa-solid fa-gears"></i>
+                        Objetivos de Investigación</h3>
+                    <ul style="font-size: 15px; line-height: 1.7; color: #475569; padding-left: 20px; margin: 0;">
+                        <li>Modelar matemáticamente cada tanque mediante integrales definidas.</li>
+                        <li>Maximizar el volumen útil respetando cotas de contorno fijas.</li>
+                        <li>Medir la eficiencia de uso de insumos por la relación V/A.</li>
+                        <li>Validar el error residual a través de la integración numérica de Simpson.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide3">
+        <h2 class="slide-title">Planteamiento del Problema</h2>
+        <div class="content-area">
+            <p style="font-size: 18px; color: #334155; margin-bottom: 25px; text-align: justify;">
+                El departamento de infraestructura requiere diseñar un tanque de almacenamiento con un volumen ideal
+                parametrizado de <strong>V₀ = 24 m³</strong>. No obstante, el entorno físico y de
+                seguridad impone restricciones infranqueables en las dimensiones límites del sólido:
+            </p>
+            <div class="three-column">
+                <div class="info-card style=" text-align: center;">
+                    <div style="text-align:center; margin-bottom:10px;"><i class="fa-solid fa-arrows-up-down"
+                            style="font-size: 32px; color: #f97316;"></i></div>
+                    <h3 style="text-align:center; font-size:18px;">Cota de Altura (h)</h3>
+                    <p style="font-size: 30px; font-weight: 700; color: #002147; text-align:center; margin: 10px 0;">h ≤
+                        2.0 m</p>
+                    <p style="font-size: 14px; color: #64748b; text-align:center;">Estabilidad del centro de gravedad y
+                        mitigación de empuje hidrostático.</p>
+                </div>
+                <div class="info-card" style="text-align: center;">
+                    <div style="text-align:center; margin-bottom:10px;"><i class="fa-solid fa-arrows-left-right"
+                            style="font-size: 32px; color: #f97316;"></i></div>
+                    <h3 style="text-align:center; font-size:18px;">Cota de Radio (R)</h3>
+                    <p style="font-size: 30px; font-weight: 700; color: #002147; text-align:center; margin: 10px 0;">R ≤
+                        1.0 m</p>
+                    <p style="font-size: 14px; color: #64748b; text-align:center;">Límites de confinamiento en planta y
+                        área disponible de cimentación.</p>
+                </div>
+                <div class="info-card accent-orange" style="text-align: center;">
+                    <div style="text-align:center; margin-bottom:10px;"><i class="fa-solid fa-scale-balanced"
+                            style="font-size: 32px; color: #c2410c;"></i></div>
+                    <h3 style="text-align:center; font-size:18px; color: #c2410c;">Eficiencia de Material</h3>
+                    <p style="font-size: 20px; font-weight: 700; color: #7c2d12; text-align:center; margin: 18px 0;">
+                        Maximizar V / Minimizar A</p>
+                    <p style="font-size: 14px; color: #9a3412; text-align:center;">Optimizar la lámina constructiva para
+                        abaratar la cadena de costos.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide4">
+        <h2 class="slide-title">Ecuaciones del Modelo Analítico</h2>
+        <div class="content-area">
+            <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">
+                El comportamiento y cubicación de los tanques obtenidos al rotar las curvas sobre el eje coordinado
+                vertical (Y) se rigen bajo las ecuaciones formales del Cálculo Integral:
+            </p>
+            <div class="two-column">
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 10px; text-align: center;"><i
+                            class="fa-solid fa-cube"></i> Volumen por Discos Diferenciales</h3>
+                    <div class="math-box">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" style="font-size: 24px;">
+                            <mi>V</mi>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mo>∫</mo>
+                                <mrow>
+                                    <mi>a</mi>
+                                </mrow>
+                                <mrow>
+                                    <mi>b</mi>
+                                </mrow>
+                            </msubsup>
+                            <msup>
+                                <mrow>
+                                    <mo>[</mo>
+                                    <mi>f</mi>
+                                    <mo>(</mo>
+                                    <mi>y</mi>
+                                    <mo>)</mo>
+                                    <mo>]</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                            <mi>d</mi>
+                            <mi>y</mi>
+                        </math>
+                    </div>
+                </div>
+                <div>
+                    <h3 style="font-size: 16px; margin-bottom: 10px; text-align: center;"><i
+                            class="fa-solid fa-sheet-plastic"></i> Área Superficial de Revolución</h3>
+                    <div class="math-box">
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block" style="font-size: 24px;">
+                            <mi>A</mi>
+                            <mo>=</mo>
+                            <mn>2</mn>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mo>∫</mo>
+                                <mrow>
+                                    <mi>a</mi>
+                                </mrow>
+                                <mrow>
+                                    <mi>b</mi>
+                                </mrow>
+                            </msubsup>
+                            <mi>f</mi>
+                            <mo stretchy="false">(</mo>
+                            <mi>y</mi>
+                            <mo stretchy="false">)</mo>
+                            <msqrt>
+                                <mrow>
+                                    <mn>1</mn>
+                                    <mo>+</mo>
+                                    <msup>
+                                        <mrow>
+                                            <mo>[</mo>
+                                            <msup>
+                                                <mi>f</mi>
+                                                <mo>′</mo>
+                                            </msup>
+                                            <mo>(</mo>
+                                            <mi>y</mi>
+                                            <mo>)</mo>
+                                            <mo>]</mo>
+                                        </mrow>
+                                        <mn>2</mn>
+                                    </msup>
+                                </mrow>
+                            </msqrt>
+                            <mi>d</mi>
+                            <mi>y</mi>
+                        </math>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide5">
+        <h2 class="slide-title">1. Tanque Cilíndrico: Análisis Analítico</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        Modelado mediante una función constante correspondiente al radio máximo permisible, <math>
+                            <mi>f</mi>
+                            <mo>(</mo>
+                            <mi>y</mi>
+                            <mo>)</mo>
+                            <mo>=</mo>
+                            <mi>R</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                        </math>. Se evalúa sobre el intervalo acotado por la cota superior de altura de
+                        la planta: <math>
+                            <mi>y</mi>
+                            <mo>∈</mo>
+                            <mo>[</mo>
+                            <mn>0</mn>
+                            <mo>,</mo>
+                            <mn>2</mn>
+                            <mo>]</mo>
+                        </math>.
+                    </p>
+                    <div class="info-card accent-orange" style="margin-bottom: 15px;">
+                        <strong>Volumen Máximo Alcanzable:</strong><br>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+                            <mi>V</mi>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mo>∫</mo>
+                                <mn>0</mn>
+                                <mn>2</mn>
+                            </msubsup>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <mn>1</mn>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                            <mi>d</mi>
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <mn>2</mn>
+                            <mi>π</mi>
+                            <mo>≈</mo>
+                            <mn>6.28</mn>
+                            <msup>
+                                <mtext> m</mtext>
+                                <mn>3</mn>
+                            </msup>
+                        </math> 
+                    </div>
+                    <div class="info-card">
+                        <strong>Área Superficial Desarrollada (Paredes + Tapas):</strong><br>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+                            <msub>
+                                <mi>A</mi>
+                                <mtext>total</mtext>
+                            </msub>
+                            <mo>=</mo>
+                            <mn>2</mn>
+                            <mi>π</mi>
+                            <mi>R</mi>
+                            <mi>h</mi>
+                            <mo>+</mo>
+                            <mn>2</mn>
+                            <mi>π</mi>
+                            <msup>
+                                <mi>R</mi>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>=</mo>
+                            <mn>4</mn>
+                            <mi>π</mi>
+                            <mo>+</mo>
+                            <mn>2</mn>
+                            <mi>π</mi>
+                            <mo>=</mo>
+                            <mn>6</mn>
+                            <mi>π</mi>
+                            <mo>≈</mo>
+                            <mn>18.85</mn>
+                            <msup>
+                                <mtext> m</mtext>
+                                <mn>2</mn>
+                            </msup>
+                        </math> 
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h3 style="font-size: 16px; color: #002147; margin-bottom: 12px;"><i
+                            class="fa-solid fa-chart-pie"></i> Desempeño Operativo</h3>
+                    <ul style="font-size: 14px; line-height: 1.8; color: #475569; padding-left: 20px; margin:0;">
+                        <li><strong>Eficiencia Indexada (V/A):</strong> 0.333.</li>
+                        <li><strong>Aprovechamiento Espacial:</strong> 100% óptimo (ocupa todo el contenedor rectangular
+                            envolvente).</li>
+                        <li><strong>Presupuesto de Fabricación:</strong> $302.75 USD.</li>
+                        <li><strong>Costo Unitario Amortizado:</strong> 48.2 USD/m³ útil.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide6">
+        <h2 class="slide-title">Cilindro: Simulación y Computación</h2>
+        <div class="content-area">
+            <div class="code-editor-canvas">
+                <div class="editor-top-bar">
+                    <div class="window-control ctrl-close"></div>
+                    <div class="window-control ctrl-min"></div>
+                    <div class="window-control ctrl-max"></div>
+                    <span
+                        style="margin-left: 15px; font-size: 13px; color: #94a3b8; font-weight: 500;">sim_tanque_cilindrico.py</span>
+                </div>
+                <div class="editor-body">
+                    <span class="py-keyword">import</span> numpy <span class="py-keyword">as</span> np<br>
+                    <span class="py-keyword">from</span> scipy.integrate <span class="py-keyword">import</span>
+                    simpson<br><br>
+                    <span class="py-comment"># Construcción de la malla discreta y vector de radio constante
+                        (R=1)</span><br>
+                    y = np.<span class="py-func">linspace</span>(<span class="py-num">0</span>, <span
+                        class="py-num">2</span>, <span class="py-num">1000</span>) <br>
+                    radio_cuadrado = np.<span class="py-func">ones_like</span>(y) <span class="py-comment"># f(y) = 1 ⇒
+                        R² = 1</span> <br><br>
+                    <span class="py-comment"># Integración numérica por método de Simpson compuesto</span><br>
+                    volumen_cilindro = np.pi * <span class="py-func">simpson</span>(radio_cuadrado, x=y) <br>
+                    <span class="py-func">print</span>(<span class="py-str">f"Volumen numérico calculado para el
+                        Cilindro: {volumen_cilindro:.4f} m3"</span>) 
+                </div>
+                <div class="terminal-output">
+                    >>> Volumen numérico calculado para el Cilindro: 6.2832 m3 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide6-img">
+        <h2 class="slide-title">Visualización 3D: Tanque Cilíndrico</h2>
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
+            <img src="cilindro.png" alt="Modelo 3D Cilíndrico" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide7">
+        <h2 class="slide-title">2. Tanque Esférico: Análisis Analítico</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        Para aprovechar la altura máxima de 2 metros, la circunferencia se modela desplazada en su
+                        centro, obedeciendo a la ecuación <math>
+                            <msup>
+                                <mi>x</mi>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>+</mo>
+                            <msup>
+                                <mrow>
+                                    <mo>(</mo>
+                                    <mi>y</mi>
+                                    <mo>-</mo>
+                                    <mn>1</mn>
+                                    <mo>)</mo>
+                                </mrow>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                        </math>. Despejando el radio cuadrado de giro: <math>
+                            <msup>
+                                <mi>x</mi>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>=</mo>
+                            <mn>2</mn>
+                            <mi>y</mi>
+                            <mo>-</mo>
+                            <msup>
+                                <mi>y</mi>
+                                <mn>2</mn>
+                            </msup>
+                        </math>.
+                    </p>
+                    <div class="info-card accent-orange" style="margin-bottom: 15px;">
+                        <strong>Volumen por Integración Integral:</strong><br>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="inline">
+                            <mi>V</mi>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mo>∫</mo>
+                                <mn>0</mn>
+                                <mn>2</mn>
+                            </msubsup>
+                            <mrow>
+                                <mo>(</mo>
+                                <mn>2</mn>
+                                <mi>y</mi>
+                                <mo>-</mo>
+                                <msup>
+                                    <mi>y</mi>
+                                    <mn>2</mn>
+                                </msup>
+                                <mo>)</mo>
+                            </mrow>
+                            <mi>d</mi>
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mrow>
+                                    <mo>[</mo>
+                                    <msup>
+                                        <mi>y</mi>
+                                        <mn>2</mn>
+                                    </msup>
+                                    <mo>-</mo>
+                                    <mfrac>
+                                        <msup>
+                                            <mi>y</mi>
+                                            <mn>3</mn>
+                                        </msup>
+                                        <mn>3</mn>
+                                    </mfrac>
+                                    <mo>]</mo>
+                                </mrow>
+                                <mn>0</mn>
+                                <mn>2</mn>
+                            </msubsup>
+                            <mo>=</mo>
+                            <mfrac>
+                                <mrow>
+                                    <mn>4</mn>
+                                    <mi>π</mi>
+                                    <mmultiscripts></mmultiscripts>
+                                </mrow>
+                                <mn>3</mn>
+                                </msubsup>
+                                <mo>≈</mo>
+                                <mn>4.19</mn>
+                                <msup>
+                                    <mtext> m</mtext>
+                                    <mn>3</mn>
+                                </msup>
+                        </math> 
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h3 style="font-size: 16px; color: #002147; margin-bottom: 12px;"><i
+                            class="fa-solid fa-circle-notch"></i> Eficiencia y Presión</h3>
+                    <ul style="font-size: 14px; line-height: 1.8; color: #475569; padding-left: 20px; margin: 0;">
+                        <li><strong>Área de Lámina Necesaria:</strong> <math>
+                                <mi>A</mi>
+                                <mo>=</mo>
+                                <mn>4</mn>
+                                <mi>π</mi>
+                                <msup>
+                                    <mi>R</mi>
+                                    <mn>2</mn>
+                                </msup>
+                                <mo>≈</mo>
+                                < 12.57</mo>
+                                    <msup>
+                                        <mtext> m</mtext>
+                                        <mn>2</mn>
+                                    </msup>
+                            </math>.</li>
+                        <li><strong>Eficiencia Geométrica (V/A):</strong> 0.333.</li>
+                        <li><strong>Inversión de Insumos:</strong> $210.90 USD.</li>
+                        <li><strong>Costo Unitario Amortizado:</strong> 50.4 USD/m³ útil.</li>
+                        <li><em>Análisis Crítico:</em> Brinda una óptima distribución de esfuerzos de presión
+                            hidrostática, pero desaprovecha el espacio cúbico de las esquinas de contorno.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide8">
+        <h2 class="slide-title">Esfera: Simulación y Computación</h2>
+        <div class="content-area">
+            <div class="code-editor-canvas">
+                <div class="editor-top-bar">
+                    <div class="window-control ctrl-close"></div>
+                    <div class="window-control ctrl-min"></div>
+                    <div class="window-control ctrl-max"></div>
+                    <span
+                        style="margin-left: 15px; font-size: 13px; color: #94a3b8; font-weight: 500;">sim_tanque_esferico.py</span>
+                </div>
+                <div class="editor-body">
+                    <span class="py-keyword">import</span> numpy <span class="py-keyword">as</span> np<br>
+                    <span class="py-keyword">from</span> scipy.integrate <span class="py-keyword">import</span>
+                    simpson<br><br>
+                    <span class="py-comment"># Discretización vertical e ingreso de la corona desplazada</span><br>
+                    y = np.<span class="py-func">linspace</span>(<span class="py-num">0</span>, <span
+                        class="py-num">2</span>, <span class="py-num">1000</span>) <br>
+                    x_cuadrado = <span class="py-num">1.0</span> - (y - <span class="py-num">1.0</span>)**<span
+                        class="py-num">2</span> <span class="py-comment"># Ecuación circular: R² - (y -
+                        y_centro)²</span> <br><br>
+                    <span class="py-comment"># Integración compuesta de la sección transversal</span><br>
+                    volumen_esfera = np.pi * <span class="py-func">simpson</span>(x_cuadrado, x=y) <br>
+                    <span class="py-func">print</span>(<span class="py-str">f"Volumen numérico calculado para la Esfera:
+                        {volumen_esfera:.4f} m3"</span>) 
+                </div>
+                <div class="terminal-output">
+                    >>> Volumen numérico calculado para la Esfera: 4.1888 m3 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide8-img">
+        <h2 class="slide-title">Visualización 3D: Tanque Esférico</h2>
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
+            <img src="esfera.png" alt="Modelo 3D Esférico" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide9">
+        <h2 class="slide-title">3. Tanque Elipsoidal: Límites Geométricos</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        El elipsoide de revolución simétrico se describe a través de la ecuación acotada sobre el
+                        semieje mayor vertical (a) y horizontal radial (b):
+                    </p>
+                    <div
+                        style="background: #f8fafc; padding: 12px; border-radius: 8px; font-size: 17px; text-align: center; margin-bottom: 20px; font-family: monospace; border: 1px solid #cbd5e1;">
+                        (x² / b²) + ((y-1)² / a²) = 1 
+                    </div>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        Debido a las estrictas cotas de contorno físico requeridas, el radio horizontal disponible
+                        restringe <math>
+                            <mi>b</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mtext> m</mtext>
+                        </math>. Paralelamente, la altura confinada de 2 m restringe de forma irreversible
+                        el semieje vertical a <math>
+                            <mi>a</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mtext> m</mtext>
+                        </math>.
+                    </p>
+                </div>
+                <div class="info-card accent-orange">
+                    <h3 style="color: #c2410c; font-size: 17px; margin-bottom: 12px;"><i
+                            class="fa-solid fa-triangle-exclamation"></i> Colapso por Identidad Esférica</h3>
+                    <p style="font-size: 15px; line-height: 1.7; color: #7c2d12; text-align: justify; margin: 0;">
+                        Al igualarse matemáticamente las magnitudes de los tres semiejes coordinados en la unidad <math>
+                            <mo>(</mo>
+                            <mi>a</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mo>,</mo>
+                            <mi>b</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mo>)</mo>
+                        </math> por culpa del confinamiento del espacio de planta, el elipsoide se optimiza
+                        degenerándose en una **esfera perfecta**. Por consiguiente, asume con exactitud los mismos
+                        valores de rendimiento físico calculados previamente: **V = 4.19 m³** y **A = 12.57 m²**.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide10">
+        <h2 class="slide-title">Elipsoide: Simulación y Computación</h2>
+        <div class="content-area">
+            <div class="code-editor-canvas">
+                <div class="editor-top-bar">
+                    <div class="window-control ctrl-close"></div>
+                    <div class="window-control ctrl-min"></div>
+                    <div class="window-control ctrl-max"></div>
+                    <span
+                        style="margin-left: 15px; font-size: 13px; color: #94a3b8; font-weight: 500;">sim_tanque_elipsoidal.py</span>
+                </div>
+                <div class="editor-body">
+                    <span class="py-keyword">import</span> numpy <span class="py-keyword">as</span> np<br>
+                    <span class="py-keyword">from</span> scipy.integrate <span class="py-keyword">import</span>
+                    simpson<br><br>
+                    a_semieje_ver = <span class="py-num">1.0</span> <span class="py-comment"># Restricción de Altura h=2
+                        ⇒ 2a = 2 ⇒ a=1</span> <br>
+                    b_semieje_rad = <span class="py-num">1.0</span> <span class="py-comment"># Restricción de Radio R=1
+                        ⇒ b=1</span> <br><br>
+                    y = np.<span class="py-func">linspace</span>(<span class="py-num">0</span>, <span
+                        class="py-num">2</span>, <span class="py-num">1000</span>) <br>
+                    x_cuadrado = (b_semieje_rad**<span class="py-num">2</span>) * (<span class="py-num">1.0</span> - ((y
+                    - <span class="py-num">1.0</span>)**<span class="py-num">2</span>) / (a_semieje_ver**<span
+                        class="py-num">2</span>)) <br><br>
+                    volumen_elipsoide = np.pi * <span class="py-func">simpson</span>(x_cuadrado, x=y) <br>
+                    <span class="py-func">print</span>(<span class="py-str">f"Volumen numérico calculado para el
+                        Elipsoide: {volumen_elipsoide:.4f} m3"</span>)
+                </div>
+                <div class="terminal-output">
+                    >>> Volumen numérico calculado para el Elipsoide: 4.1888 m3 
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide10-img">
+        <h2 class="slide-title">Visualización 3D: Tanque Elipsoidal (Esfera)</h2>
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
+            <img src="elipsoide.png" alt="Modelo 3D Elipsoidal" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide11">
+        <h2 class="slide-title">4. Tanque Paraboloide: Corrección Analítica</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        Para acoplarse con exactitud a un radio superior de <math>
+                            <mi>R</mi>
+                            <mo>=</mo>
+                            <mn>1</mn>
+                            <mtext> m</mtext>
+                        </math> justo al tocar la altura límite de <math>
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <mn>2</mn>
+                            <mtext> m</mtext>
+                        </math>, la curva generatriz cuadrática debe responder a la función de ajuste real: <strong>y =
+                            2x²</strong>.
+                    </p>
+                    <p style="font-size: 16px; text-align: justify; color: #334155;">
+                        Despejando el radio al cuadrado del disco de revolución en términos de la variable independiente
+                        sobre el eje vertical, obtenemos: <strong>x² = y/2</strong>.
+                    </p>
+                    <div class="info-card accent-orange">
+                        <strong>Desarrollo Formal de la Integral de Volumen:</strong><br>
+                        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+                            style="font-size: 20px; margin-top: 10px;">
+                            <mi>V</mi>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <msubsup>
+                                <mo>∫</mo>
+                                <mn>0</mn>
+                                <mn>2</mn>
+                            </msubsup>
+                            <mrow>
+                                <mo>(</mo>
+                                <mfrac>
+                                    <mi>y</mi>
+                                    <mn>2</mn>
+                                </mfrac>
+                                <mo>)</mo>
+                            </mrow>
+                            <mi>d</mi>
+                            <mi>y</mi>
+                            <mo>=</mo>
+                            <mfrac>
+                                <mi>π</mi>
+                                <mn>2</mn>
+                            </mfrac>
+                            <msubsup>
+                                <mrow>
+                                    <mo>[</mo>
+                                    <mfrac>
+                                        <msup>
+                                            <mi>y</mi>
+                                            <mn>2</mn>
+                                        </msup>
+                                        <mn>2</mn>
+                                    </mfrac>
+                                    ]</mo>
+                                </mrow>
+                                <mn>0</mn>
+                                <mn>2</mn>
+                            </msubsup>
+                            <mo>=</mo>
+                            <mfrac>
+                                <mi>π</mi>
+                                <mn>2</mn>
+                            </mfrac>
+                            <mrow>
+                                <mo>(</mo>
+                                <mn>2</mn>
+                                <mo>)</mo>
+                            </mrow>
+                            <mo>=</mo>
+                            <mi>π</mi>
+                            <mo>≈</mo>
+                            <mn>3.14</mn>
+                            <msup>
+                                <mtext> m</mtext>
+                                <mn>3</mn>
+                            </msup>
+                        </math>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h3 style="font-size: 16px; color: #002147; margin-bottom: 12px;"><i
+                            class="fa-solid fa-arrow-down-wide-short"></i> Eficiencia Reducida</h3>
+                    <ul style="font-size: 14px; line-height: 1.8; color: #475569; padding-left: 20px; margin: 0;">
+                        <li><strong>Volumen Real Validado:</strong> 3.14 m³.</li>
+                        <li><strong>Área de Paredes + Cubierta Tapa:</strong> 12.18 m².</li>
+                        <li><strong>Eficiencia Volumétrica (V/A):</strong> 0.257 (el rendimiento estructural más bajo de
+                            la investigación).</li>
+                        <li><em>Análisis de Ingeniería:</em> Su perfil parabólico genera un desperdicio neto del 50% de
+                            la capacidad espacial potencial, almacenando exactamente la mitad que el cilindro estándar.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide12">
+        <h2 class="slide-title">Paraboloide: Simulación y Computación</h2>
+        <div class="content-area">
+            <div class="code-editor-canvas">
+                <div class="editor-top-bar">
+                    <div class="window-control ctrl-close"></div>
+                    <div class="window-control ctrl-min"></div>
+                    <div class="window-control ctrl-max"></div>
+                    <span
+                        style="margin-left: 15px; font-size: 13px; color: #94a3b8; font-weight: 500;">sim_tanque_paraboloide.py</span>
+                </div>
+                <div class="editor-body">
+                    <span class="py-keyword">import</span> numpy <span class="py-keyword">as</span> np<br>
+                    <span class="py-keyword">from</span> scipy.integrate <span class="py-keyword">import</span>
+                    simpson<br><br>
+                    <span class="py-comment"># Discretización fina e ingreso del radio linealizado corregido</span><br>
+                    y = np.<span class="py-func">linspace</span>(<span class="py-num">0</span>, <span
+                        class="py-num">2</span>, <span class="py-num">1000</span>)<br>
+                    x_cuadrado = y / <span class="py-num">2.0</span> <span class="py-comment"># f(y) = √(y/2) ⇒ R² =
+                        y/2</span><br><br>
+                    <span class="py-comment"># Ejecución de cuadratura numérica de discos</span><br>
+                    volumen_paraboloide = np.pi * <span class="py-func">simpson</span>(x_cuadrado, x=y)<br>
+                    <span class="py-func">print</span>(<span class="py-str">f"Volumen numérico calculado para el
+                        Paraboloide: {volumen_paraboloide:.4f} m3"</span>)
+                </div>
+                <div class="terminal-output">
+                    >>> Volumen numérico calculado para el Paraboloide: 3.1416 m3
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide12-img">
+        <h2 class="slide-title">Visualización 3D: Tanque Paraboloide</h2>
+        <div class="content-area" style="display: flex; justify-content: center; align-items: center;">
+            <img src="paraboloide.png" alt="Modelo 3D Paraboloide" style="max-height: 550px; object-fit: contain; filter: drop-shadow(0 15px 35px rgba(0,0,0,0.1));">
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide13">
+        <h2 class="slide-title">Matriz General de Resultados Consolidados</h2>
+        <div class="content-area">
+            <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">
+                Síntesis cruzada de los modelos de integración analítica y las métricas del estudio de viabilidad
+                financiera del proyecto:
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Geometría de Tanque</th>
+                        <th>Volumen Útil (m³)</th>
+                        <th>Área de Superficie (m²)</th>
+                        <th>Eficiencia (V/A)</th>
+                        <th>Inversión de Insumos</th>
+                        <th>Costo por m³ Almacenado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="font-weight: 700; background: #fff7ed;">
+                        <td><i class="fa-solid fa-database" style="color: #002147; margin-right: 8px;"></i> Cilíndrico
+                        </td>
+                        <td>6.28 m³ </td>
+                        <td>18.85 m² </td>
+                        <td>0.333 </td>
+                        <td>$302.75 USD </td>
+                        <td style="color: #f97316;">48.2 USD/m³ </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa-solid fa-circle" style="color: #475569; margin-right: 8px;"></i> Esférico</td>
+                        <td>4.18 m³ </td>
+                        <td>12.56 m² </td>
+                        <td>0.333 </td>
+                        <td>$210.90 USD </td>
+                        <td>50.4 USD/m³ </td>
+                    </tr>
+                    <tr>
+                        <td><i class="fa-solid fa-egg" style="color: #475569; margin-right: 8px;"></i> Elipsoidal</td>
+                        <td>4.18 m³ </td>
+                        <td>12.56 m² </td>
+                        <td>0.333 </td>
+                        <td>$203.90 USD </td>
+                        <td>48.7 USD/m³ </td>
+                    </tr>
+                    <tr style="color: #94a3b8;">
+                        <td><i class="fa-solid fa-chart-line" style="color: #94a3b8; margin-right: 8px;"></i>
+                            Paraboloide</td>
+                        <td>3.14 m³ </td>
+                        <td>12.18 m² </td>
+                        <td>0.257 </td>
+                        <td>$202.70 USD </td>
+                        <td>64.5 USD/m³ </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide14">
+        <h2 class="slide-title">Visualización Analítica: Capacidad vs. Insumo</h2>
+        <div class="content-area">
+            <div class="bar-graph-panel">
+                <div class="graph-row">
+                    <div class="graph-axis-title">CILINDRO</div>
+                    <div class="graph-bar-track">
+                        <div class="graph-bar-fill color-navy" style="width: 100%;">6.28 m³</div>
+                        <div class="area-sub-line" style="width: 100%;"></div>
+                    </div>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-axis-title">ESFERA</div>
+                    <div class="graph-bar-track">
+                        <div class="graph-bar-fill color-slate" style="width: 66%;">4.18 m³</div>
+                        <div class="area-sub-line" style="width: 66%;"></div>
+                    </div>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-axis-title">ELIPSOIDE</div>
+                    <div class="graph-bar-track">
+                        <div class="graph-bar-fill color-slate" style="width: 66%;">4.18 m³</div>
+                        <div class="area-sub-line" style="width: 66%;"></div>
+                    </div>
+                </div>
+                <div class="graph-row">
+                    <div class="graph-axis-title" style="color: #f97316;">PARABOLOIDE</div>
+                    <div class="graph-bar-track">
+                        <div class="graph-bar-fill color-slate" style="width: 50%; background: #94a3b8;">3.14 m³</div>
+                        <div class="area-sub-line" style="width: 64%;"></div>
+                    </div>
+                </div>
+            </div>
+            <div
+                style="display: flex; gap: 40px; justify-content: center; margin-top: 55px; font-size: 14px; font-weight: 500;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 24px; height: 16px; background: #002147; border-radius: 3px;"></div> Sólido:
+                    Volumen de Capacidad Útil (m³)
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 24px; height: 6px; background: #f97316; border-radius: 2px;"></div> Línea Base:
+                    Área Superficial Requerida (m²)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide15">
+        <h2 class="slide-title">Jerarquía de Optimización y Selección</h2>
+        <div class="content-area">
+            <div class="staircase-panel">
+                <div class="stair-level winner-level">
+                    <div class="level-badge">1</div>
+                    <div class="level-body">
+                        <h3 style="font-size: 16px; margin: 0;">TANQUE CILÍNDRICO (Alternativa de Selección) </h3>
+                        <p style="margin: 0; font-size: 13px; color: #64748b;">Ganador indiscutible del proyecto:
+                            aprovecha las cotas espaciales al máximo y arroja el menor costo por m³ indexado.</p>
+                    </div>
+                    <div class="level-output-data">6.28 m³ </div>
+                </div>
+                <div class="stair-level">
+                    <div class="level-badge">2</div>
+                    <div class="level-body">
+                        <h3 style="font-size: 16px; margin: 0;">TANQUE ESFÉRICO / ELIPSOIDAL</h3>
+                        <p style="margin: 0; font-size: 13px; color: #64748b;">Geometría teórica ideal, pero limitada en
+                            volumen constructivo por culpa de las restricciones en planta.</p>
+                    </div>
+                    <div class="level-output-data">4.18 m³ </div>
+                </div>
+                <div class="stair-level" style="opacity: 0.75;">
+                    <div class="level-badge" style="background: #64748b;">3</div>
+                    <div class="level-body">
+                        <h3 style="font-size: 16px; margin: 0;">TANQUE PARABOLOIDE</h3>
+                        <p style="margin: 0; font-size: 13px; color: #64748b;">Bajo rendimiento espacial útil. Registra
+                            el costo de manufactura menos eficiente por unidad de volumen.</p>
+                    </div>
+                    <div class="level-output-data">3.14 m³ </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide-sim">
+        <h2 class="slide-title">Simulador Interactivo de Capacidad Hidrostática</h2>
+        <div class="content-area">
+            <div class="two-column" style="gap: 40px; align-items: stretch;">
+                <div class="info-card" style="display: flex; flex-direction: column; justify-content: center;">
+                    <h3 style="font-size: 18px; margin-bottom: 25px; color: #002147;"><i class="fa-solid fa-sliders" style="color: #f97316; margin-right: 8px;"></i> Panel de Control (Simulación 2D)</h3>
+                    
+                    <label for="tank-select" style="font-weight: 600; display: block; margin-bottom: 8px; color: #334155;">Geometría Estructural:</label>
+                    <select id="tank-select" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #cbd5e1; margin-bottom: 30px; font-family: 'Inter'; font-size: 15px; color: #002147; font-weight: 500; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <option value="cilindro">Tanque Cilíndrico (Óptimo)</option>
+                        <option value="esfera">Tanque Esférico / Elipsoidal</option>
+                        <option value="paraboloide">Tanque Paraboloide</option>
+                    </select>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px;">
+                        <label for="level-slider" style="font-weight: 600; color: #334155;">Nivel de Llenado (h):</label>
+                        <span id="h-display" style="font-size: 20px; font-weight: 700; color: #f97316; font-family: 'Fira Code', monospace;">0.00 m</span>
+                    </div>
+                    <input type="range" id="level-slider" min="0" max="2" step="0.01" value="0" style="width: 100%; margin-bottom: 40px; accent-color: #f97316; cursor: pointer;">
+                    
+                    <div style="background: linear-gradient(135deg, #002147, #0f172a); color: white; padding: 25px; border-radius: 12px; text-align: center; box-shadow: 0 10px 25px rgba(0, 33, 71, 0.2);">
+                        <div style="font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; color: #94a3b8; margin-bottom: 8px;">Volumen Calculado (Integral)</div>
+                        <div id="v-display" style="font-size: 38px; font-weight: 700; font-family: 'Fira Code', monospace; color: #38bdf8;">0.00 <span style="font-size: 20px; color: #94a3b8;">m³</span></div>
+                    </div>
+                </div>
+                <div class="sim-canvas-container" style="background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px; display: flex; justify-content: center; align-items: center; position: relative; height: 100%; min-height: 400px; box-shadow: inset 0 4px 10px rgba(0,0,0,0.03);">
+                    <!-- Contenedor WebGL 3D Plotly -->
+                    <div id="sim-3d" style="width: 100%; height: 100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide16">
+        <h2 class="slide-title">Conclusiones y Aprendizajes de Ingeniería</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div class="info-card">
+                    <h3 style="color: #002147; font-size: 17px; margin-bottom: 12px;"><i
+                            class="fa-solid fa-graduation-cap"></i> Veredicto Práctico</h3>
+                    <p style="font-size: 14px; line-height: 1.6; color: #475569; text-align: justify; margin: 0;">
+                        Debido al severo confinamiento impuesto por el entorno (<math>
+                            <mi>h</mi>
+                            <mo>≤</mo>
+                            <mn>2</mn>
+                        </math>, <math>
+                            <mi>R</mi>
+                            <mo>≤</mo>
+                            <mn>1</mn>
+                        </math>), <strong>ninguna de las geometrías de revolución logra alcanzar la meta teórica de 24
+                            m³</strong>. No obstante, bajo estas condiciones críticas, el
+                        <strong>tanque cilíndrico se consolida como la solución óptima de ingeniería</strong>,
+                        duplicando la capacidad neta del paraboloide y superando en un 50% la capacidad de
+                        almacenamiento de la esfera.
+                    </p>
+                </div>
+                <div class="info-card accent-orange">
+                    <h3 style="color: #c2410c; font-size: 17px; margin-bottom: 12px;"><i
+                            class="fa-solid fa-code-merge"></i> Aporte de la Ingeniería de Sistemas</h3>
+                    <p style="font-size: 14px; line-height: 1.6; color: #7c2d12; text-align: justify; margin: 0;">
+                        Este proyecto resalta cómo el modelado computacional y algorítmico robustece al cálculo
+                        analítico clásico. Para nuestro perfil profesional, la programación orientada a la
+                        ingeniería (Python) es clave: actúa como un <strong>auditor de software automatizado</strong>
+                        que valida integraciones complejas, mitiga el riesgo de error humano y optimiza la toma de
+                        decisiones presupuestarias y estructurales en la industria real.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LÓGICA DEL SIMULADOR 3D INTERACTIVO (PLOTLY WEBGL)
+        document.addEventListener('DOMContentLoaded', () => {
+            const tankSelect = document.getElementById('tank-select');
+            const levelSlider = document.getElementById('level-slider');
+            const hDisplay = document.getElementById('h-display');
+            const vDisplay = document.getElementById('v-display');
+            
+            // Fórmulas analíticas de volumen dado h
+            const volumes = {
+                'cilindro': (h) => Math.PI * h,
+                'esfera': (h) => Math.PI * (h*h - (h*h*h)/3.0),
+                'paraboloide': (h) => Math.PI * (h*h / 4.0)
+            };
+
+            // Función para generar matrices 3D (X, Y, Z) para revolución
+            function generateSurface(type, zMin, zMax, steps) {
+                const thetaSteps = 40;
+                let x = [], y = [], z = [];
+                
+                // Prevenir errores si la altura es 0 (líquido vacío)
+                if (zMax <= zMin) zMax = zMin + 0.001; 
+                
+                for (let i = 0; i <= steps; i++) {
+                    let currentZ = zMin + (zMax - zMin) * (i / steps);
+                    let r = 0;
+                    if (type === 'cilindro') r = 1.0;
+                    else if (type === 'esfera') r = Math.sqrt(Math.max(0, 2*currentZ - currentZ*currentZ));
+                    else if (type === 'paraboloide') r = Math.sqrt(Math.max(0, currentZ / 2.0));
+                    
+                    let rowX = [], rowY = [], rowZ = [];
+                    for (let j = 0; j <= thetaSteps; j++) {
+                        let theta = (j / thetaSteps) * 2 * Math.PI;
+                        rowX.push(r * Math.cos(theta));
+                        rowY.push(r * Math.sin(theta));
+                        rowZ.push(currentZ);
+                    }
+                    x.push(rowX);
+                    y.push(rowY);
+                    z.push(rowZ);
+                }
+                
+                // Agregar tapas para dar sensación de sólido cerrado al líquido
+                if (zMax > 0.01) {
+                    let topX = [], topY = [], topZ = [];
+                    let rTop = 0;
+                    if (type === 'cilindro') rTop = 1.0;
+                    else if (type === 'esfera') rTop = Math.sqrt(Math.max(0, 2*zMax - zMax*zMax));
+                    else if (type === 'paraboloide') rTop = Math.sqrt(Math.max(0, zMax / 2.0));
+                    
+                    for (let j = 0; j <= thetaSteps; j++) {
+                        topX.push(0); topY.push(0); topZ.push(zMax); // Centro superior
+                    }
+                    x.push(topX); y.push(topY); z.push(topZ);
+                }
+
+                return {x, y, z};
+            }
+
+            let initialCamera = { eye: {x: 1.5, y: 1.5, z: 0.8} };
+
+            function updateSimulation() {
+                const type = tankSelect.value;
+                const h = parseFloat(levelSlider.value);
+                
+                // Actualizar textos interfaz
+                hDisplay.textContent = h.toFixed(2) + " m";
+                const v = volumes[type](h);
+                vDisplay.innerHTML = v.toFixed(3) + ' <span style="font-size: 20px; color: #94a3b8;">m³</span>';
+                
+                // 1. Capa Exterior: Tanque Translúcido
+                const tank = generateSurface(type, 0, 2, 20);
+                const traceTank = {
+                    x: tank.x, y: tank.y, z: tank.z,
+                    type: 'surface',
+                    opacity: 0.15,
+                    colorscale: [[0, '#002147'], [1, '#002147']], // Azul Marino
+                    showscale: false,
+                    hoverinfo: 'none',
+                    name: 'Contorno'
+                };
+
+                // 2. Capa Interior: Líquido
+                let traceLiquid = null;
+                if (h > 0) {
+                    const liquid = generateSurface(type, 0, h, Math.max(5, Math.floor(h * 15)));
+                    traceLiquid = {
+                        x: liquid.x, y: liquid.y, z: liquid.z,
+                        type: 'surface',
+                        opacity: 0.85,
+                        colorscale: [[0, '#0284c7'], [1, '#38bdf8']], // Azul Agua
+                        showscale: false,
+                        hoverinfo: 'none',
+                        name: 'Líquido'
+                    };
+                }
+                
+                const data = traceLiquid ? [traceTank, traceLiquid] : [traceTank];
+
+                // Mantener estado de cámara si ya existe
+                const graphDiv = document.getElementById('sim-3d');
+                if (graphDiv && graphDiv._fullLayout && graphDiv._fullLayout.scene && graphDiv._fullLayout.scene.camera) {
+                    initialCamera = graphDiv._fullLayout.scene.camera;
+                }
+
+                const layout = {
+                    margin: {l:10, r:10, b:10, t:10},
+                    scene: {
+                        xaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                        yaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                        zaxis: {range: [0, 2.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                        camera: initialCamera,
+                        aspectratio: {x: 1, y: 1, z: 1.2}
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)'
+                };
+
+                Plotly.react('sim-3d', data, layout, {displayModeBar: false});
+            }
+
+            // Event Listeners
+            levelSlider.addEventListener('input', updateSimulation);
+            tankSelect.addEventListener('change', updateSimulation);
+
+            // Iniciar renderizado
+            updateSimulation();
+        });
+    </script>
+</body>
+
+</html>
