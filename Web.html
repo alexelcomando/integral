@@ -1464,17 +1464,18 @@
                     initialCamera = graphDiv._fullLayout.scene.camera;
                 }
 
+                // Layout interactivo estilo Matplotlib (con rejilla y ejes)
                 const layout = {
                     margin: {l:10, r:10, b:10, t:10},
                     scene: {
-                        xaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
-                        yaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
-                        zaxis: {range: [0, 2.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                        xaxis: {range: [-1.2, 1.2], showgrid: true, zeroline: true, showticklabels: true, title: 'X (m)', gridcolor: '#e5e7eb'},
+                        yaxis: {range: [-1.2, 1.2], showgrid: true, zeroline: true, showticklabels: true, title: 'Y (m)', gridcolor: '#e5e7eb'},
+                        zaxis: {range: [0, 2.2], showgrid: true, zeroline: true, showticklabels: true, title: 'Z (m)', gridcolor: '#e5e7eb'},
                         camera: initialCamera,
                         aspectratio: {x: 1, y: 1, z: 1.2}
                     },
-                    paper_bgcolor: 'rgba(0,0,0,0)',
-                    plot_bgcolor: 'rgba(0,0,0,0)'
+                    paper_bgcolor: '#ffffff',
+                    plot_bgcolor: '#ffffff'
                 };
 
                 Plotly.react('sim-3d', data, layout, {displayModeBar: false});
@@ -1483,18 +1484,18 @@
             levelSlider.addEventListener('input', updateSimulation);
             tankSelect.addEventListener('change', updateSimulation);
 
-            // --- GRÁFICOS ESTÁTICOS 3D (REEMPLAZO DE IMÁGENES) ---
+            // --- GRÁFICOS ESTÁTICOS 3D (ESTILO MATPLOTLIB SEGÚN REFERENCIA) ---
             const layoutStatic = {
                 margin: {l:0, r:0, b:0, t:0},
                 scene: {
-                    xaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
-                    yaxis: {range: [-1.2, 1.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
-                    zaxis: {range: [0, 2.2], showgrid: false, zeroline: false, showticklabels: false, title: ''},
+                    xaxis: {range: [-1.2, 1.2], showgrid: true, zeroline: true, showticklabels: true, title: 'X (m)', gridcolor: '#e5e7eb'},
+                    yaxis: {range: [-1.2, 1.2], showgrid: true, zeroline: true, showticklabels: true, title: 'Y (m)', gridcolor: '#e5e7eb'},
+                    zaxis: {range: [0, 2.2], showgrid: true, zeroline: true, showticklabels: true, title: 'Z (m)', gridcolor: '#e5e7eb'},
                     camera: {eye: {x: 1.6, y: 1.6, z: 1.0}},
                     aspectratio: {x: 1, y: 1, z: 1.2}
                 },
-                paper_bgcolor: 'rgba(0,0,0,0)',
-                plot_bgcolor: 'rgba(0,0,0,0)'
+                paper_bgcolor: '#ffffff',
+                plot_bgcolor: '#ffffff'
             };
 
             const shapes = ['cilindro', 'esfera', 'esfera', 'paraboloide']; 
@@ -1507,15 +1508,16 @@
                     x: surf.x, y: surf.y, z: surf.z,
                     type: 'surface',
                     opacity: 1,
-                    colorscale: [[0, '#c2410c'], [1, '#f97316']], // Naranja técnico
+                    colorscale: [[0, '#d55e00'], [1, '#d55e00']], // Naranja quemado/óxido
                     showscale: false,
                     hoverinfo: 'none',
                     contours: {
-                        x: {show: true, color: 'rgba(255,255,255,0.2)', width: 1},
-                        y: {show: true, color: 'rgba(255,255,255,0.2)', width: 1},
-                        z: {show: true, color: 'rgba(255,255,255,0.3)', width: 2}
+                        x: {show: true, color: 'rgba(100,30,0,0.4)', width: 1}, // Líneas oscuras
+                        y: {show: true, color: 'rgba(100,30,0,0.4)', width: 1},
+                        z: {show: true, color: 'rgba(100,30,0,0.4)', width: 1}
                     },
-                    lighting: {ambient: 0.5, diffuse: 0.9, specular: 0.8, roughness: 0.2, fresnel: 0.2}
+                    // Lighting "Matte" para imitar el look analítico de matplotlib
+                    lighting: {ambient: 0.7, diffuse: 0.7, specular: 0.1, roughness: 0.9, fresnel: 0.1}
                 };
                 if(document.getElementById(divId)){
                     Plotly.newPlot(divId, [trace], layoutStatic, {displayModeBar: false});
